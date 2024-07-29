@@ -8,8 +8,8 @@ services:
     networks:
     - backend
     environment:
-      - PGADMIN_DEFAULT_EMAIL=root@radware.com
-      - PGADMIN_DEFAULT_PASSWORD=radware
+      - PGADMIN_DEFAULT_EMAIL=$PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD=$PGADMIN_DEFAULT_PASSWORD
 
   database:
     image: postgres:latest 
