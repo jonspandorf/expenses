@@ -1,0 +1,77 @@
+services:
+
+  adminer:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    ports: 
+    - 8081:80
+    networks:
+    - backend
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=root@radware.com
+      - PGADMIN_DEFAULT_PASSWORD=radware
+
+  database:
+    image: postgres:latest 
+    ports:
+    - 5432:5432 
+    hostname: psql
+    environment:
+      - POSTGRES_USER=radware
+      - POSTGRES_PASSWORD=radware
+      - POSTGRES_DB=expenses
+    container_name: psql
+    networks:
+    - backend 
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - expense-data-prd:/var/lib/postgresql/data
+  
+  api: 
+    image: berliozintegrator/expenses-backend
+    build: 
+      context: ./backend
+    ports: 
+    - 5000:5000
+    networks:
+    - backend 
+    - frontend 
+    environment:
+      - PSQL_USER=radware
+      - PSQL_PASSWORD=radware 
+      - PSQL_DB_NAME=expenses
+      - PSQL_HOST=psql
+    container_name: api 
+    hostname: backend
+    depends_on:
+      - database
+
+  frontend: 
+    image: berliozintegrator/expenses-frontend
+    build: 
+      context: ./frontend
+    volumes: 
+    - ./frontend:/app 
+    working_dir: /app 
+    ports: 
+    - 8080:80
+    networks:
+      - frontend 
+    depends_on:
+      - api
+
+  grafana:
+    image: grafana/grafana
+    ports: 
+    - 80:3000
+    networks: 
+      - backend
+    depends_on:
+      - api
+
+volumes:
+  expense-data-prd:
+
+networks:
+  frontend: 
+  backend:
