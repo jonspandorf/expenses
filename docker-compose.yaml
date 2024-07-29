@@ -15,11 +15,11 @@ services:
     image: postgres:latest 
     ports:
     - 5432:5432 
-    hostname: psql
+    hostname: $PSQL_HOST
     environment:
-      - POSTGRES_USER=radware
-      - POSTGRES_PASSWORD=radware
-      - POSTGRES_DB=expenses
+      - POSTGRES_USER=$PSQL_USER
+      - POSTGRES_PASSWORD=$PSQL_PASSWORD
+      - POSTGRES_DB=$PSQL_DB_NAME
     container_name: psql
     networks:
     - backend 
@@ -37,10 +37,10 @@ services:
     - backend 
     - frontend 
     environment:
-      - PSQL_USER=radware
-      - PSQL_PASSWORD=radware 
-      - PSQL_DB_NAME=expenses
-      - PSQL_HOST=psql
+      - PSQL_USER=$PSQL_USER
+      - PSQL_PASSWORD=$PSQL_PASSWORD 
+      - PSQL_DB_NAME=$PSQL_DB_NAME
+      - PSQL_HOST=$PSQL_HOST
     container_name: api 
     hostname: backend
     depends_on:
